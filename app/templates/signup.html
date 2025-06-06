@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Amazon | Sign Up{% endblock %}
+
+{% block body %}
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="col-md-6">
+    <div class="card shadow-lg p-4">
+      <h2 class="text-center mb-4">📝 Create Account</h2>
+
+      {% for m in messages %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error:</strong> {{ m }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+
+      <form method="post" >
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" name="uname" class="form-control" id="username" required>
+          <div class="form-text">Choose a unique username.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" name="uemail" class="form-control" id="email" required>
+          <div class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" name="upass" class="form-control" id="password" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label">Confirm Password</label>
+          <input type="password" name="ucpass" class="form-control" id="confirmPassword" required>
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="termsCheck" required>
+          <label class="form-check-label" for="termsCheck">I agree to the terms and conditions</label>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Sign Up</button>
+          <a href="/" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <small>Already have an account? <a href="{% url 'signin' %}">Sign In</a></small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

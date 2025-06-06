@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Amazon | Add Profile{% endblock title %}
+{% block body %}
+<div class="container mt-3">
+    <h2>Create your profile</h2>
+    {% for m in messages %}
+    <div class="alert alert-danger"> {{m}} </div>
+    {% endfor %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="">Mobile</label>
+            <input type="number" name="mobile" id="" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="">Gender</label>
+            <select name="gender" id="" class="form-control" required>
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="">Date of Birth</label>
+            <input type="date" name="dob" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="">Photo</label>
+            <input type="file" name="photo" class="form-control" id="" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Create Profile</button>
+    </form>
+</div>
+{% endblock %}

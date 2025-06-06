@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Amazon | My Profile{% endblock title %}
+{% block body %}
+<div class="container mt-3">
+    <h2>My Profile</h2>
+    {% if userprofile %}
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <img src="{{userprofile.photo.url}}" alt="{{user}}" width="250" height="250">
+            <p><strong>Name: {{user}} </strong></p>
+            <p><strong>Email: {{user.email}} </strong></p>
+            <p><strong>Mobile: {{userprofile.mobile}} </strong></p>
+            <p><strong>Gender: {{userprofile.gender}}</strong></p>
+            <p><strong>DOB: {{userprofile.dob}}</strong></p>
+            <div class="mt-3">
+                <a href="{% url "editprofile" userprofile.id %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="alert alert-warning">
+        No Profile found. Please <a href="{% url "addprofile" %}" class="text-decoration-none">complete your profile</a>
+    </div>
+
+    {% endif %}
+    
+    <h2>My Addresses</h2>
+    {% if addresses %}
+    {% for a in addresses %}
+         <div class="card mb-4">
+            <div class="card-body">
+                <p><strong>Address:</strong> {{a.address}}</p>
+                <p><strong>City:</strong> {{a.city.name}}</p>
+                <p><strong>Country:</strong> {{a.country.name}}</p>
+                <p><strong>Pincode:</strong> {{a.pincode}}</p>
+                <div class="mt-3">
+                    <a href="{% url "editaddress" a.id  %}" class="btn btn-primary">Edit Address</a>
+                    <a 
+                    href="{% url "deleteaddress" a.id  %}" 
+                    class="btn btn-primary" 
+                    onclick="return confirm('Are you sure want to delete this address?')"
+                    >Delete Address</a>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+            
+            {% else %}
+            <div class="alert alert-warning">
+                No address found. Please <a href="{% url "addaddress" %}" class="text-decoration-none">add your address</a>.
+            </div>
+            {% endif %}
+            
+            <div class="mt-3">
+                <a href="{% url "addaddress" %}" class="btn btn-success"> + Add Another Address</a>
+            </div>
+</div>
+{% endblock %}

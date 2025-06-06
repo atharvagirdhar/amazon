@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Amazon Product{% endblock title %}
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        {% comment %} image {% endcomment %}
+        <div class="col-md-6 mt-3 text-center">
+            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for i in productimage %}
+                    <div class="carousel-item active" data-bs-interval="1000">
+                        <img src="{{i.image.url}}" class="d-block w-100" alt="..." width="400px" height="400px">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+        {% comment %} details {% endcomment %}
+        <div class="col-md-6 mt-3 text-left">
+            <div class="card-header">Product Details</div>
+            <div class="card-body">
+                <h5 class="card-text">Name: {{product.productname}} </h5>
+                <p class="card-text text-success fw-bold">Special Price</p>
+                <p class="card-text">
+                    <strong>Rs: {{product.price}} </strong>
+                </p>
+                <p class="card-text"> {{product.description}} </p>
+                <h3 class="card-text fw-bold">
+                    Available Quantity:{{product.qty_available}}
+                </h3>
+                <p class="card-text fw-bold">Available Offers</p>
+                <ul>
+                    <li>Bank Offer 10% Debit/Credit</li>
+                    <li>Bank Offer 50% Unlimited Cashback</li>
+                    <li>No cost EMI 3,333/month</li>
+                </ul>
+                <a href="{% url "addtocart" product.productid %}" class="btn btn-primary"> Add to Cart</a>
+                <a href=" {% url "addtowishlist" product.productid %} " class="btn btn-success"> Add to Wishlist</a>
+                <a href="/" class="btn btn-primary"> Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

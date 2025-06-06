@@ -1,0 +1,153 @@
+{% extends 'base.html' %} {% block title %}Amazon | Place Order{% endblock %} {% block body %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Order Summary Header -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold">🛒 Review Your Order</h2>
+        <p class="text-muted">
+          Please verify your details before proceeding to payment.
+        </p>
+      </div>
+
+      <!-- Customer & Address Info -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <strong>Customer & Shipping Information</strong>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <p><strong>Name:</strong> {{ profile.user }}</p>
+              <p><strong>Email:</strong> {{ profile.user.email }}</p>
+              <p><strong>Mobile:</strong> {{ profile.mobile }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Address:</strong> {{ address.address }}</p>
+              <p><strong>City:</strong> {{ address.city.name }}</p>
+              <p><strong>Country:</strong> {{ address.country.name }}</p>
+              <p><strong>Pincode:</strong> {{ address.pincode }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cart Items -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+          <strong>Products in Your Cart</strong>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in cartdata %}
+                <tr>
+                  <td>{{ item.productname }}</td>
+                  <td>{{ item.qty }}</td>
+                  <td>₹{{ item.price }}</td>
+                  <td><strong>₹{{ item.subtotal }}</strong></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total & Pay Button -->
+      <div class="d-flex justify-content-between align-items-center">
+        <h4>Total Amount: <span class="text-success">₹{{ total }}</span></h4>
+        <!-- <a href="#" class="btn btn-success btn-lg px-5">💳 Pay Now</a> -->
+        <div class="text-center mt-4">
+          <button id="rzp-button1" class="btn btn-success btn-lg">
+            💳 Pay Now
+          </button>
+          <a href="{% url 'showcarts' %}" class="btn btn-danger btn-lg">
+            ❌ Cancel
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  var options = {
+    key: "rzp_test_gPo5O7emkkc4va", // Enter the Key ID generated from the Dashboard
+    amount: "{{amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    currency: "INR",
+    name: "Amzaon",
+    description: "Purchase",
+    image: "https://example.com/your_logo",
+    order_id: "{{orderid}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    handler: function (response) {
+      fetch("/payment/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+        }),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Payment processing failed on server");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (data.redirect_url) {
+            window.location.href = data.redirect_url;
+          } else if (data.status === "success") {
+            alert("Payment Successfully Done!");
+            window.location.href = "/payment_success/";
+          } else {
+            alert("Payment Failed. Please contact support");
+          }
+        });
+
+      // alert(response.razorpay_payment_id);
+      // alert(response.razorpay_order_id);
+      // alert(response.razorpay_signature);
+    },
+    prefill: {
+      name: "Gaurav Kumar",
+      email: "gaurav.kumar@example.com",
+      contact: "9000090000",
+    },
+    notes: {
+      address: "Razorpay Corporate Office",
+    },
+    theme: {
+      color: "#3399cc",
+    },
+  };
+  var rzp1 = new Razorpay(options);
+  rzp1.on("payment.failed", function (response) {
+    alert(response.error.code);
+    alert(response.error.description);
+    alert(response.error.source);
+    alert(response.error.step);
+    alert(response.error.reason);
+    alert(response.error.metadata.order_id);
+    alert(response.error.metadata.payment_id);
+  });
+  document.getElementById("rzp-button1").onclick = function (e) {
+    rzp1.open();
+    e.preventDefault();
+  };
+</script>
+{% endblock %}

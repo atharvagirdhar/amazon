@@ -1,0 +1,152 @@
+{% extends 'base.html' %} {% block title %}Amazon|Carts{% endblock %} 
+{% load static %} {% block body %}
+
+<div class="container">
+    <div class="row">
+      {% for m in messages %}
+      <div class="alert alert-info">{{m}}</div>
+      {% endfor %}
+        <!-- image and details -->
+        <div class="col-md-10">
+            <div class="row">
+
+                <!-- image -->
+              {% for product in cart_item %}
+              <div class="col-md-6 mt-3 text-center">
+                <div
+                  id="carouselExampleInterval"
+                  class="carousel slide"
+                  data-bs-ride="carousel"
+                >
+                  <div class="carousel-inner mt-3">
+                    {% for x in product.productid.productimage_set.all %}
+                    <div class="carousel-item active" data-bs-interval="1000">
+                      <img
+                        src="{{x.image.url}}"
+                        class="d-block w-100"
+                        alt="..."
+                        width="400px"
+                        height="400px"
+                      />
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#carouselExampleInterval"
+                    data-bs-slide="prev"
+                  >
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselExampleInterval"
+                    data-bs-slide="next"
+                  >
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+              </div>
+    
+              <!-- deatils -->
+    <div class="col-md-6 mt-3">    
+      <div class="card-header fw-bold mt-3 bg-secondary">Product Details</div>
+        <div class="card-body mt-3">
+        <h5 class="card-text">Name:{{product.productid.productname}}</h5>
+        <p class="card-text text-success fw-bold">Special Price</p>
+        <p class="card-text">
+          <strong>Rs: ₹{{product.productid.price}}</strong>
+          &nbsp;
+          <del class="fw-bold">₹{{product.productid.price|add:product.productid.price}}</del>
+          <span class="text-success fw-bold">50% off</span>
+        </p>
+        <p class="card-text">{{product.productid.description}}</p>
+       
+        <p class="card-text fw-bold">Available Offers</p>
+        <ul>
+          <li>Bank Offer 10% Debit/Credit</li>
+          <li>Bank Offer 50% Unlimited Cashback</li>
+          <li>No cose EMI 3,333/month</li>
+        </ul>
+
+        <h5>
+            Deliver by <strong>Date: {{future_date}}</strong>|<span>Free</span>
+        </h5>
+        <p>10 Days Return Policy</p>
+
+         <h3 class="card-text fw-bold">
+          Available Quantity:{{product.productid.qty_available}}
+        </h3>
+        <!-- qty -->
+         <p>
+            <strong>QTY:</strong>
+            <a href="{% url 'updateqty' 0 product.productid.productid %}"><button class="btn btn-danger">-</button></a>
+
+            <input type="number" value="{{product.qty}}" style="width: 50px;" disabled> 
+            
+            {% if product.qty < product.productid.qty_available %}
+            <a href="{% url 'updateqty' 1 product.productid.productid %}"><button class="btn btn-success">+</button></a>
+            {% else %}
+            <button class="btn btn-danger">Max</button>
+            <small class="text-center">No more stock</small>
+            {% endif %}
+         </p>
+
+
+        {% if has_profile and has_address %}
+        <a href="{% url "checkoutsingle" product.productid.productid %}" class="btn btn-primary">Checkout</a>
+        {% else %}
+        <button class="btn btn-secondary">Checkout Unavailable</button>
+        {% endif %}
+        <a href="{% url "removetocart" product.productid.productid %}" class="btn btn-danger">Remove</a>
+        
+       
+        
+      </div>
+    </div>
+
+     {% empty %}
+        <div class="text-center text-danger">
+            <h5>Your Cart is empty. Start adding products</h5>
+        </div>
+
+    {% endfor %}
+            </div>
+        </div>
+
+        <!-- total amount section -->
+        <div class="col-md-2">
+            <div class="row">
+              <h3 class="btn-danger">Total Summary</h3>
+              <h5>Total items: {{totalitems}}</h5>
+              <hr>
+              <h5>Total Amount:{{totalamount}} </h5>
+              {% if has_profile and has_address %}
+              <a href="{% url "checkout" %}" class="btn btn-primary">Proceed to Checkout</a>
+              {% else %}
+              <button class="btn btn-secondary">Checkout Unavailable</button> 
+              {% endif %}
+
+              
+              {% if not has_profile %}
+              <div class="alert alert-warning mt-3">
+                Please <a href="{% url "addprofile" %}" class="text-decoration-none">Add your profile </a>before Checkout
+              </div>
+              {% endif %}
+              {% if not has_address %}
+              <div class="alert alert-warning mt-3">
+                Please <a href="{% url "addaddress" %}" class="text-decoration-none">Add your address </a>before Checkout
+              </div>
+              {% endif %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}
